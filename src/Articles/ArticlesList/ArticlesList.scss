@@ -1,0 +1,15 @@
+.search-form {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.search-input {
+  padding-right: 50px;
+}
+
+.search-clear {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+}

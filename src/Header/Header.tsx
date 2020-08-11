@@ -2,9 +2,8 @@ import React, { ReactElement } from "react";
 
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
-
-import Button from "react-bootstrap/Button";
+// import NavDropdown from "react-bootstrap/NavDropdown";
+// import Button from "react-bootstrap/Button";
 
 import "./Header.scss";
 import { CountriesEnum } from "../Service/CountriesEnum";
@@ -14,10 +13,8 @@ const header = (props: {
   countryDisabled: boolean;
   onCountryEvent: (country: CountriesEnum) => void;
   onTopNewsEvent: () => void;
+  onSearchEvent: () => void;
 }): ReactElement => {
-  const handleEventTopNews = (): void => {
-    props.onTopNewsEvent();
-  };
   const handleEventCountry = (country: CountriesEnum): void => {
     props.onCountryEvent(country);
   };
@@ -25,11 +22,13 @@ const header = (props: {
   return (
     <Navbar sticky="top" bg="light" expand="lg">
       <Nav className="mr-auto">
-        <Nav.Link href="#topNews" active onClick={handleEventTopNews}>
+        <Nav.Link href="#topNews" active onClick={props.onTopNewsEvent}>
           Top news
         </Nav.Link>
         <Nav.Link href="#categories">Categories</Nav.Link>
-        <Nav.Link href="#search">Search</Nav.Link>
+        <Nav.Link href="#search" onClick={props.onSearchEvent}>
+          Search
+        </Nav.Link>
       </Nav>
       {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
       {/* <Navbar.Collapse id="basic-navbar-nav">

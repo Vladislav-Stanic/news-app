@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 
 import Card from "react-bootstrap/Card";
 import "./ArticleSingle.scss";
-import { ArticleInterface } from "../article-interface";
+import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 
 const articleCard = (props: {
@@ -19,10 +19,6 @@ const articleCard = (props: {
   ): void => {
     props.onArticleMoreEvent(event, props.item);
   };
-  const handleEventBack = (): void => {
-    props.onArticleBackEvent();
-    console.log("go back!!!");
-  };
 
   return (
     <Card>
@@ -33,7 +29,7 @@ const articleCard = (props: {
         alt={props.item.title}
         title={props.item.title}
       />
-      {props.type == ArticleTypeEnum.SingleCard ? (
+      {props.type === ArticleTypeEnum.SingleCard ? (
         <React.Fragment>
           <Card.Body>
             <Card.Text>{props.item.description}</Card.Text>
@@ -45,7 +41,7 @@ const articleCard = (props: {
           </Card.Footer>
         </React.Fragment>
       ) : null}
-      {props.type == ArticleTypeEnum.SingleDetails ? (
+      {props.type === ArticleTypeEnum.SingleDetails ? (
         <React.Fragment>
           <Card.Body>
             <Card.Text>
@@ -53,7 +49,7 @@ const articleCard = (props: {
             </Card.Text>
           </Card.Body>
           <Card.Footer className="text-left">
-            <Card.Link href="#" onClick={handleEventBack}>
+            <Card.Link href="#" onClick={props.onArticleBackEvent}>
               &laquo; Back
             </Card.Link>
           </Card.Footer>

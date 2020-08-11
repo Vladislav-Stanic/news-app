@@ -1,9 +1,11 @@
 import { articlesUrl, country_code, category, api_key } from "../config/config";
-import { ArticleInterface } from "../Articles/article-interface";
+import { ArticleInterface } from "../Articles/ArticleInterface";
+import { CountriesEnum } from "./CountriesEnum";
 
 export async function getArticles(
-  countryCodePar: string | null,
-  categoryPar: string | null
+  countryCodePar: CountriesEnum | null,
+  categoryPar: string | null,
+  searchTerm: string | null
 ): Promise<ArticleInterface[]> {
   if (countryCodePar == null) {
     countryCodePar = country_code;
@@ -14,14 +16,16 @@ export async function getArticles(
   }
 
   try {
-    const articles: Response = await fetch(
-      `${articlesUrl}?country=${countryCodePar}&category=${categoryPar}`,
-      {
-        headers: {
-          "X-API-KEY": api_key,
-        },
-      }
-    );
+    const urlBase = `${articlesUrl}?country=${countryCodePar}&category=${categoryPar}`;
+    const url = searchTerm == null ? urlBase : `${urlBase}&q=${searchTerm}`;
+
+    console.log("url ======== ", url);
+
+    const articles: Response = await fetch(url, {
+      headers: {
+        "X-API-KEY": api_key,
+      },
+    });
 
     const result = await articles.json();
     // articles = null;
