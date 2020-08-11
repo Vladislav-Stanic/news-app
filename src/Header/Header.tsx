@@ -7,12 +7,25 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Button from "react-bootstrap/Button";
 
 import "./Header.scss";
+import { CountriesEnum } from "../Service/CountriesEnum";
 
-const header = (): ReactElement => {
+const header = (props: {
+  country: CountriesEnum;
+  countryDisabled: boolean;
+  onCountryEvent: (country: CountriesEnum) => void;
+  onTopNewsEvent: () => void;
+}): ReactElement => {
+  const handleEventTopNews = (): void => {
+    props.onTopNewsEvent();
+  };
+  const handleEventCountry = (country: CountriesEnum): void => {
+    props.onCountryEvent(country);
+  };
+
   return (
     <Navbar sticky="top" bg="light" expand="lg">
       <Nav className="mr-auto">
-        <Nav.Link href="#topNews" active>
+        <Nav.Link href="#topNews" active onClick={handleEventTopNews}>
           Top news
         </Nav.Link>
         <Nav.Link href="#categories">Categories</Nav.Link>
@@ -29,10 +42,22 @@ const header = (): ReactElement => {
         </Nav>
       </Navbar.Collapse> */}
       <Nav>
-        <Nav.Link href="#gb" active>
-          GB
+        <Nav.Link
+          href="#gb"
+          active={props.country === CountriesEnum.GB}
+          disabled={props.countryDisabled}
+          onClick={() => handleEventCountry(CountriesEnum.GB)}
+        >
+          {CountriesEnum.GB}
         </Nav.Link>
-        <Nav.Link href="#en">US</Nav.Link>
+        <Nav.Link
+          href="#en"
+          active={props.country === CountriesEnum.US}
+          disabled={props.countryDisabled}
+          onClick={() => handleEventCountry(CountriesEnum.US)}
+        >
+          {CountriesEnum.US}
+        </Nav.Link>
       </Nav>
     </Navbar>
   );

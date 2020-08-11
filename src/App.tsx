@@ -6,16 +6,20 @@ import Container from "react-bootstrap/Container";
 import { ArticleInterface } from "./Articles/article-interface";
 
 import Header from "./Header/Header";
-import { getArticles } from "./service/service";
 import ArticlesList from "./Articles/ArticlesList/ArticlesList";
 import ArticleCard from "./Articles/ArticleSingle/ArticleSingle";
 import { ArticleTypeEnum } from "./Articles/ArticleTypeEnum";
+import { CountriesEnum } from "./Service/CountriesEnum";
+import { getArticles } from "./Service/Service";
 
 type MyProps = unknown;
 type MyState = {
   isLoading: boolean;
   articles: ArticleInterface[];
   articleSingle: ArticleInterface | null;
+  countryCode: CountriesEnum;
+  countryDisabled: boolean;
+  category: string;
 };
 
 class App extends React.Component<MyProps, MyState> {
@@ -25,11 +29,14 @@ class App extends React.Component<MyProps, MyState> {
       isLoading: true,
       articles: [],
       articleSingle: null,
+      countryCode: CountriesEnum.GB,
+      countryDisabled: false,
+      category: "",
     };
   }
 
   componentDidMount(): void {
-    getArticles().then((it) => {
+    getArticles(null, null).then((it) => {
       this.setState({
         isLoading: false,
         articles: it,
@@ -46,18 +53,35 @@ class App extends React.Component<MyProps, MyState> {
       this.setState({
         isLoading: false,
         articleSingle: item,
+        countryDisabled: true,
       });
     };
 
     const handleEventBack = (): void => {
       this.setState({
         articleSingle: null,
+        countryDisabled: false,
+      });
+    };
+
+    const handleEventCountry = (country: CountriesEnum): void => {
+      getArticles(country, null).then((it) => {
+        this.setState({
+          isLoading: false,
+          articles: it,
+          countryCode: country,
+        });
       });
     };
 
     return (
       <div className="App">
-        <Header />
+        <Header
+          country={this.state.countryCode}
+          countryDisabled={this.state.countryDisabled}
+          onTopNewsEvent={handleEventBack}
+          onCountryEvent={handleEventCountry}
+        />
 
         <Container className="container-main">
           {this.state.articleSingle == null ? (
