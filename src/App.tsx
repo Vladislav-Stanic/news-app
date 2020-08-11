@@ -1,89 +1,79 @@
-import React, { Component, ReactElement } from "react";
+import React, { ReactElement } from "react";
 import "./App.scss";
-import { ArticleInterface } from "./article-interface";
 
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 
-import CardDeck from "react-bootstrap/CardDeck";
-import Card from "react-bootstrap/Card";
+import { ArticleInterface } from "./Articles/article-interface";
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+import Header from "./Header/Header";
+import { getArticles } from "./service/service";
+import ArticlesList from "./Articles/ArticlesList/ArticlesList";
+import ArticleCard from "./Articles/ArticleSingle/ArticleSingle";
+import { ArticleTypeEnum } from "./Articles/ArticleTypeEnum";
 
 type MyProps = unknown;
-type MyState = { articles: [] };
+type MyState = {
+  isLoading: boolean;
+  articles: ArticleInterface[];
+  articleSingle: ArticleInterface | null;
+};
 
 class App extends React.Component<MyProps, MyState> {
   constructor(props: []) {
     super(props);
     this.state = {
+      isLoading: true,
       articles: [],
+      articleSingle: null,
     };
   }
 
   componentDidMount(): void {
-    fetch(
-      "https://newsapi.org/v2/top-headlines?country=us&apiKey=581d9e0087ef418a86224e1420fefc90"
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then((myJson) => {
-        console.log("myJson ==== ", myJson);
-
-        this.setState({
-          articles: myJson.articles,
-        });
+    getArticles().then((it) => {
+      this.setState({
+        isLoading: false,
+        articles: it,
+        articleSingle: null,
       });
+    });
   }
 
   render(): ReactElement {
+    const handleEventSingle = (
+      event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+      item: ArticleInterface
+    ): void => {
+      this.setState({
+        isLoading: false,
+        articleSingle: item,
+      });
+    };
+
+    const handleEventBack = (): void => {
+      this.setState({
+        articleSingle: null,
+      });
+    };
+
     return (
       <div className="App">
-        <Container>
-          <CardDeck>
-            {this.state.articles.map(
-              (item: ArticleInterface, index: number) => {
-                return (
-                  <Card key={index}>
-                    <Card.Title>{item.title}</Card.Title>
-                    <Card.Img
-                      variant="top"
-                      src={item.urlToImage}
-                      alt={item.title}
-                      title={item.title}
-                    />
-                    <Card.Body>
-                      <Card.Text>{item.description}</Card.Text>
-                    </Card.Body>
-                    <Card.Footer className="text-right">
-                      <Card.Link href={item.url}>More &raquo;</Card.Link>
-                    </Card.Footer>
-                  </Card>
-                );
-              }
-            )}
-          </CardDeck>
+        <Header />
+
+        <Container className="container-main">
+          {this.state.articleSingle == null ? (
+            <ArticlesList
+              articles={this.state.articles}
+              onArticleMoreEvent={handleEventSingle}
+            />
+          ) : null}
+          {this.state.articleSingle != null ? (
+            <ArticleCard
+              item={this.state.articleSingle}
+              type={ArticleTypeEnum.SingleDetails}
+              onArticleBackEvent={handleEventBack}
+              onArticleMoreEvent={handleEventSingle}
+            />
+          ) : null}
         </Container>
       </div>
     );
