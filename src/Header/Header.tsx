@@ -2,18 +2,19 @@ import React, { ReactElement } from "react";
 
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-// import NavDropdown from "react-bootstrap/NavDropdown";
-// import Button from "react-bootstrap/Button";
 
 import "./Header.scss";
-import { CountriesEnum } from "../Service/CountriesEnum";
+import { CountriesEnum } from "../Categories/CountriesEnum";
+import { PagesEnum } from "../Service/PagesEnum";
+
+// Used to extract values from PagesEnum as its keys and values differ
+declare type enumTypePages = keyof typeof PagesEnum;
 
 const header = (props: {
   country: CountriesEnum;
   countryDisabled: boolean;
   onCountryEvent: (country: CountriesEnum) => void;
-  onTopNewsEvent: () => void;
-  onSearchEvent: () => void;
+  onPageEvent: (page: PagesEnum) => void;
 }): ReactElement => {
   const handleEventCountry = (country: CountriesEnum): void => {
     props.onCountryEvent(country);
@@ -22,13 +23,19 @@ const header = (props: {
   return (
     <Navbar sticky="top" bg="light" expand="lg">
       <Nav className="mr-auto">
-        <Nav.Link href="#topNews" active onClick={props.onTopNewsEvent}>
-          Top news
-        </Nav.Link>
-        <Nav.Link href="#categories">Categories</Nav.Link>
-        <Nav.Link href="#search" onClick={props.onSearchEvent}>
-          Search
-        </Nav.Link>
+        {Object.keys(PagesEnum).map((it: string, index: number) => {
+          const enumdata: string = PagesEnum[it as enumTypePages];
+          return (
+            <Nav.Link
+              key={index}
+              href={`#${it}`}
+              onClick={() => props.onPageEvent(enumdata as PagesEnum)}
+            >
+              {" "}
+              {enumdata}
+            </Nav.Link>
+          );
+        })}{" "}
       </Nav>
       {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
       {/* <Navbar.Collapse id="basic-navbar-nav">
@@ -41,22 +48,21 @@ const header = (props: {
         </Nav>
       </Navbar.Collapse> */}
       <Nav>
-        <Nav.Link
-          href="#gb"
-          active={props.country === CountriesEnum.GB}
-          disabled={props.countryDisabled}
-          onClick={() => handleEventCountry(CountriesEnum.GB)}
-        >
-          {CountriesEnum.GB}
-        </Nav.Link>
-        <Nav.Link
-          href="#en"
-          active={props.country === CountriesEnum.US}
-          disabled={props.countryDisabled}
-          onClick={() => handleEventCountry(CountriesEnum.US)}
-        >
-          {CountriesEnum.US}
-        </Nav.Link>
+        {Object.values(CountriesEnum).map(
+          (it: CountriesEnum, index: number) => {
+            return (
+              <Nav.Link
+                key={index}
+                href={`#${it.toLowerCase()}`}
+                active={props.country === it}
+                disabled={props.countryDisabled}
+                onClick={() => handleEventCountry(it)}
+              >
+                {it}
+              </Nav.Link>
+            );
+          }
+        )}{" "}
       </Nav>
     </Navbar>
   );

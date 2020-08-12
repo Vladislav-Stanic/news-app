@@ -11,8 +11,10 @@ import ArticleCard from "./Articles/ArticleSingle/ArticleSingle";
 import { ArticleTypeEnum } from "./Articles/ArticleTypeEnum";
 import { getArticles } from "./Service/Service";
 
-import { CountriesEnum } from "./Service/CountriesEnum";
-import { country_code } from "./config/config";
+import { CountriesEnum } from "./Categories/CountriesEnum";
+import { country_code } from "./Service/Config";
+import { CategoriesList } from "./Categories/CategoriesList";
+import { PagesEnum } from "./Service/PagesEnum";
 
 type MyProps = unknown;
 type MyState = {
@@ -24,6 +26,7 @@ type MyState = {
   category: string;
   searchActive: boolean;
   searchTerm: string;
+  articlesByCategory: CategoriesList[];
 };
 
 class App extends React.Component<MyProps, MyState> {
@@ -38,11 +41,13 @@ class App extends React.Component<MyProps, MyState> {
       category: "",
       searchActive: false,
       searchTerm: "",
+      articlesByCategory: [],
     };
   }
 
   componentDidMount(): void {
     getArticles(null, null, null).then((it) => {
+      console.log("it =========== ", it);
       this.setState({
         isLoading: false,
         articles: it,
@@ -69,16 +74,28 @@ class App extends React.Component<MyProps, MyState> {
       });
     };
 
-    const handleEventTopNews = (): void => {
-      getArticles(null, null, null).then((it) => {
-        this.setState({
-          articles: it,
-          articleSingle: null,
-          countryDisabled: false,
-          searchActive: false,
-          searchTerm: "",
-        });
-      });
+    const handleEventPage = (page: PagesEnum): void => {
+      switch (page) {
+        case PagesEnum.categories:
+          break;
+        case PagesEnum.search:
+          this.setState({
+            articleSingle: null,
+            countryDisabled: false,
+            searchActive: true,
+          });
+          break;
+        default:
+          getArticles(this.state.countryCode, null, null).then((it) => {
+            this.setState({
+              articles: it,
+              articleSingle: null,
+              countryDisabled: false,
+              searchActive: false,
+              searchTerm: "",
+            });
+          });
+      }
     };
 
     const handleEventCountry = (country: CountriesEnum): void => {
@@ -88,14 +105,6 @@ class App extends React.Component<MyProps, MyState> {
           countryCode: country,
           searchTerm: "",
         });
-      });
-    };
-
-    const handleEventSearchActive = (): void => {
-      this.setState({
-        articleSingle: null,
-        countryDisabled: false,
-        searchActive: true,
       });
     };
 
@@ -113,9 +122,8 @@ class App extends React.Component<MyProps, MyState> {
         <Header
           country={this.state.countryCode}
           countryDisabled={this.state.countryDisabled}
-          onTopNewsEvent={handleEventTopNews}
+          onPageEvent={handleEventPage}
           onCountryEvent={handleEventCountry}
-          onSearchEvent={handleEventSearchActive}
         />
 
         <Container className="container-main">

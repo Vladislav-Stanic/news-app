@@ -2,7 +2,6 @@ import React, { ReactElement } from "react";
 import "./ArticlesList.scss";
 
 import CardDeck from "react-bootstrap/CardDeck";
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 import ArticleCard from "../ArticleSingle/ArticleSingle";
@@ -10,7 +9,7 @@ import ArticleCard from "../ArticleSingle/ArticleSingle";
 import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 import { Countries } from "../../Service/Countries";
-import { CountriesEnum } from "../../Service/CountriesEnum";
+import { CountriesEnum } from "../../Categories/CountriesEnum";
 import { DebounceInput } from "react-debounce-input";
 
 const articlesList = (props: {

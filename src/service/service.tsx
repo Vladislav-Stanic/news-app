@@ -1,6 +1,6 @@
-import { articlesUrl, country_code, category, api_key } from "../config/config";
+import { articlesUrl, country_code, category, api_key } from "./Config";
 import { ArticleInterface } from "../Articles/ArticleInterface";
-import { CountriesEnum } from "./CountriesEnum";
+import { CountriesEnum } from "../Categories/CountriesEnum";
 
 export async function getArticles(
   countryCodePar: CountriesEnum | null,
@@ -16,7 +16,7 @@ export async function getArticles(
   }
 
   try {
-    const urlBase = `${articlesUrl}?country=${countryCodePar}&category=${categoryPar}`;
+    const urlBase = `${articlesUrl}?country=${countryCodePar}`;
     const url = searchTerm == null ? urlBase : `${urlBase}&q=${searchTerm}`;
 
     console.log("url ======== ", url);
