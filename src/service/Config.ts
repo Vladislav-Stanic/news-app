@@ -1,4 +1,4 @@
-import { CountriesEnum } from "../Categories/CountriesEnum";
+import { CountriesEnum } from "./CountriesEnum";
 
 export const articlesUrl = "https://newsapi.org/v2/top-headlines";
 export const country_code: CountriesEnum = CountriesEnum.GB;

@@ -9,13 +9,14 @@ import ArticleCard from "../ArticleSingle/ArticleSingle";
 import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 import { Countries } from "../../Service/Countries";
-import { CountriesEnum } from "../../Categories/CountriesEnum";
+import { CountriesEnum } from "../../Service/CountriesEnum";
 import { DebounceInput } from "react-debounce-input";
+import { PagesEnum } from "../../Service/PagesEnum";
 
 const articlesList = (props: {
   articles: ArticleInterface[];
   countryCode: CountriesEnum;
-  searchActive: boolean;
+  currentPage: PagesEnum;
   searchTerm: string;
   onArticleMoreEvent: (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -38,11 +39,21 @@ const articlesList = (props: {
   const country: string = Countries.filter(
     (it) => it.code === props.countryCode
   ).map((it) => it.name)[0];
+  console.log("props.currentPage === ", props.currentPage);
   return (
     <div>
-      {props.searchActive === false ? (
+      {/* Header on top news */}
+      {props.currentPage === PagesEnum.TopNews ? (
         <h1>Top news from {country}:</h1>
-      ) : (
+      ) : null}
+
+      {/* Header on single category */}
+      {props.currentPage === PagesEnum.CategorySingle ? (
+        <h1>Top ??? news from {country}:</h1>
+      ) : null}
+
+      {/* Search input */}
+      {props.currentPage === PagesEnum.Search ? (
         <React.Fragment>
           <h1>Search top news from {country} by term:</h1>
           <div className="search-form">
@@ -63,21 +74,26 @@ const articlesList = (props: {
             </Button>{" "}
           </div>
         </React.Fragment>
-      )}
+      ) : null}
 
-      <CardDeck>
-        {props.articles.map((item: ArticleInterface, index: number) => {
-          return (
-            <ArticleCard
-              item={item}
-              type={ArticleTypeEnum.SingleCard}
-              key={index}
-              onArticleMoreEvent={handleEventMore}
-              onArticleBackEvent={handleEventBack}
-            />
-          );
-        })}{" "}
-      </CardDeck>
+      {/* List of articles */}
+      {props.currentPage === PagesEnum.TopNews ||
+      props.currentPage === PagesEnum.CategorySingle ||
+      props.currentPage === PagesEnum.Search ? (
+        <CardDeck>
+          {props.articles.map((item: ArticleInterface, index: number) => {
+            return (
+              <ArticleCard
+                key={index}
+                item={item}
+                type={ArticleTypeEnum.SingleCard}
+                onArticleMoreEvent={handleEventMore}
+                onArticleBackEvent={handleEventBack}
+              />
+            );
+          })}{" "}
+        </CardDeck>
+      ) : null}
     </div>
   );
 };

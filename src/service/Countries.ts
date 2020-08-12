@@ -1,4 +1,4 @@
-import { CountriesEnum } from "../Categories/CountriesEnum";
+import { CountriesEnum } from "./CountriesEnum";
 
 export const Countries = [
   {

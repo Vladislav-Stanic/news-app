@@ -1,6 +1,6 @@
 import { articlesUrl, country_code, category, api_key } from "./Config";
 import { ArticleInterface } from "../Articles/ArticleInterface";
-import { CountriesEnum } from "../Categories/CountriesEnum";
+import { CountriesEnum } from "./CountriesEnum";
 
 export async function getArticles(
   countryCodePar: CountriesEnum | null,

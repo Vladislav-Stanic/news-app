@@ -1,4 +1,4 @@
-import { CategoriesEnum } from "../Service/CategoriesEnum";
+import { CategoriesEnum } from "./CategoriesEnum";
 import { ArticleInterface } from "../Articles/ArticleInterface";
 
 export interface CategoriesList {
