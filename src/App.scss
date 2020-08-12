@@ -1,7 +1,7 @@
 @import "~bootstrap/scss/bootstrap";
 
 h1 {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 img {
@@ -14,9 +14,26 @@ img {
 }
 
 .card-deck {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  grid-gap: 0.5rem;
+  // display: grid;
+  // grid-template-columns: repeat(auto-fit, minmax(250px, 314px));
+  // grid-gap: 0.5rem;
+  @media (min-width: 576px) {
+    display: flex;
+  }
+
+  .card {
+    @media (min-width: 576px) {
+      max-width: 44%;
+      min-width: 44%;
+
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+    }
+    @media (min-width: 992px) {
+      max-width: 30%;
+      min-width: 30%;
+    }
+  }
 }
 
 // .App {

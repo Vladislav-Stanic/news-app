@@ -11,6 +11,7 @@ import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 import { Countries } from "../../Service/Countries";
 import { CountriesEnum } from "../../Service/CountriesEnum";
+import { DebounceInput } from "react-debounce-input";
 
 const articlesList = (props: {
   articles: ArticleInterface[];
@@ -46,13 +47,12 @@ const articlesList = (props: {
         <React.Fragment>
           <h1>Search top news from {country} by term:</h1>
           <div className="search-form">
-            <Form.Control
-              size="lg"
-              type="text"
-              placeholder="Search term..."
+            <DebounceInput
+              minLength={2}
+              debounceTimeout={300}
               value={props.searchTerm}
               onChange={(e) => handleEventSearch(e.target.value)}
-              className="search-input"
+              className={`form-control form-control-lg search-input`}
             />
             <Button
               variant="secondary"
