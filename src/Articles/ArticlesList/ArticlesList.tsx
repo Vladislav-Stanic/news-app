@@ -4,7 +4,7 @@ import "./ArticlesList.scss";
 import CardDeck from "react-bootstrap/CardDeck";
 import Button from "react-bootstrap/Button";
 
-import ArticleCard from "../ArticleSingle/ArticleSingle";
+import ArticleSingle from "../ArticleSingle/ArticleSingle";
 
 import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
@@ -18,6 +18,7 @@ const articlesList = (props: {
   countryCode: CountriesEnum;
   currentPage: PagesEnum;
   searchTerm: string;
+  category: string;
   onArticleMoreEvent: (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     item: ArticleInterface
@@ -49,7 +50,9 @@ const articlesList = (props: {
 
       {/* Header on single category */}
       {props.currentPage === PagesEnum.CategorySingle ? (
-        <h1>Top ??? news from {country}:</h1>
+        <h1>
+          Top {props.category} news from {country}:
+        </h1>
       ) : null}
 
       {/* Search input */}
@@ -83,7 +86,7 @@ const articlesList = (props: {
         <CardDeck>
           {props.articles.map((item: ArticleInterface, index: number) => {
             return (
-              <ArticleCard
+              <ArticleSingle
                 key={index}
                 item={item}
                 type={ArticleTypeEnum.SingleCard}

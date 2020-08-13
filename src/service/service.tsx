@@ -5,6 +5,7 @@ import { CountriesEnum } from "./CountriesEnum";
 export async function getArticles(
   countryCodePar: CountriesEnum | null,
   categoryPar: string | null,
+  resultsNumber: string | null,
   searchTerm: string | null
 ): Promise<ArticleInterface[]> {
   if (countryCodePar == null) {
@@ -17,7 +18,17 @@ export async function getArticles(
 
   try {
     const urlBase = `${articlesUrl}?country=${countryCodePar}`;
-    const url = searchTerm == null ? urlBase : `${urlBase}&q=${searchTerm}`;
+    let url = urlBase;
+
+    if (searchTerm != null) {
+      url = `${urlBase}&q=${searchTerm}`;
+    } else if (categoryPar != null) {
+      if (resultsNumber == null) {
+        url = `${urlBase}&category=${categoryPar}`;
+      } else {
+        url = `${urlBase}&category=${categoryPar}&pageSize=5`;
+      }
+    }
 
     console.log("url ======== ", url);
 

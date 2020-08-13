@@ -9,14 +9,14 @@ import Header from "./Header/Header";
 import ArticlesList from "./Articles/ArticlesList/ArticlesList";
 import ArticleCard from "./Articles/ArticleSingle/ArticleSingle";
 import { ArticleTypeEnum } from "./Articles/ArticleTypeEnum";
-import { getArticles } from "./Service/Service";
 import Categories from "./Categories/Categories";
 
 import { CountriesEnum } from "./Service/CountriesEnum";
-import { country_code } from "./Service/Config";
-import { CategoriesList } from "./Categories/CategoriesList";
+import { country_code, CategoriesList } from "./Service/Config";
+import { CategoriesItem } from "./Categories/CategoriesItem";
 import { NavPagesEnum } from "./Service/NavPagesEnum";
 import { PagesEnum } from "./Service/PagesEnum";
+import { getArticles } from "./Service/Service";
 
 type MyProps = unknown;
 type MyState = {
@@ -27,9 +27,10 @@ type MyState = {
   countryDisabled: boolean;
   category: string;
   searchTerm: string;
-  articlesByCategory: CategoriesList[];
   currentPage: PagesEnum;
   previousPage: PagesEnum;
+  articlesPerCategory: CategoriesItem[];
+  results: string | null;
 };
 
 class App extends React.Component<MyProps, MyState> {
@@ -43,14 +44,15 @@ class App extends React.Component<MyProps, MyState> {
       countryDisabled: false,
       category: "",
       searchTerm: "",
-      articlesByCategory: [],
       currentPage: PagesEnum.TopNews,
       previousPage: PagesEnum.TopNews,
+      articlesPerCategory: [],
+      results: null,
     };
   }
 
   componentDidMount(): void {
-    getArticles(null, null, null).then((it) => {
+    getArticles(null, null, null, null).then((it) => {
       console.log("it =========== ", it);
       this.setState({
         isLoading: false,
@@ -86,13 +88,32 @@ class App extends React.Component<MyProps, MyState> {
     };
 
     // Navigate to a page
-    const handleEventPage = (page: NavPagesEnum): void => {
+    const handleEventPage = async (page: NavPagesEnum): Promise<void> => {
       switch (page) {
         case NavPagesEnum.Categories:
           this.setState({
+            isLoading: true,
+          });
+
+          const categories: CategoriesItem[] = [];
+          for (const item of CategoriesList) {
+            categories.push({
+              name: item,
+              articles: await getArticles(
+                this.state.countryCode,
+                item,
+                "5",
+                null
+              ),
+            });
+          }
+
+          this.setState({
+            isLoading: false,
             articleSingle: null,
             countryDisabled: false,
             currentPage: PagesEnum.Categories,
+            articlesPerCategory: categories,
           });
           break;
         case NavPagesEnum.Search:
@@ -104,13 +125,14 @@ class App extends React.Component<MyProps, MyState> {
           break;
         case NavPagesEnum.TopNews:
         default:
-          getArticles(this.state.countryCode, null, null).then((it) => {
+          getArticles(this.state.countryCode, null, null, null).then((it) => {
             this.setState({
               articles: it,
               articleSingle: null,
               countryDisabled: false,
               searchTerm: "",
               currentPage: PagesEnum.TopNews,
+              category: "",
             });
           });
           break;
@@ -118,22 +140,60 @@ class App extends React.Component<MyProps, MyState> {
     };
 
     // Change country
-    const handleEventCountry = (country: CountriesEnum): void => {
-      getArticles(country, null, null).then((it) => {
+    const handleEventCountry = async (
+      country: CountriesEnum
+    ): Promise<void> => {
+      if (this.state.currentPage === PagesEnum.Categories) {
         this.setState({
-          articles: it,
-          countryCode: country,
-          searchTerm: "",
+          isLoading: true,
         });
-      });
+
+        const categories: CategoriesItem[] = [];
+        for (const item of CategoriesList) {
+          categories.push({
+            name: item,
+            articles: await getArticles(
+              this.state.countryCode,
+              item,
+              "5",
+              null
+            ),
+          });
+        }
+
+        this.setState({
+          isLoading: false,
+          articlesPerCategory: categories,
+          countryCode: country,
+        });
+      } else {
+        getArticles(country, null, this.state.results, null).then((it) => {
+          this.setState({
+            articles: it,
+            countryCode: country,
+            searchTerm: "",
+          });
+        });
+      }
     };
 
     // Enter search term
     const handleEventSearch = (value: string): void => {
-      getArticles(this.state.countryCode, null, value).then((it) => {
+      getArticles(this.state.countryCode, null, null, value).then((it) => {
         this.setState({
           articles: it,
           searchTerm: value,
+        });
+      });
+    };
+
+    // Single category
+    const handleEventSingleCategory = (category: string): void => {
+      getArticles(this.state.countryCode, category, null, null).then((it) => {
+        this.setState({
+          articles: it,
+          category: category,
+          currentPage: PagesEnum.CategorySingle,
         });
       });
     };
@@ -157,13 +217,19 @@ class App extends React.Component<MyProps, MyState> {
               currentPage={this.state.currentPage}
               searchTerm={this.state.searchTerm}
               countryCode={this.state.countryCode}
+              category={this.state.category}
               onArticleMoreEvent={handleEventSingle}
               onSearchEvent={handleEventSearch}
             />
           ) : null}
 
           {this.state.currentPage === PagesEnum.Categories ? (
-            <Categories />
+            <Categories
+              articlesPerCategory={this.state.articlesPerCategory}
+              countryCode={this.state.countryCode}
+              handleEventSingleCategory={handleEventSingleCategory}
+              handleEventSingleArticle={handleEventSingle}
+            />
           ) : null}
 
           {this.state.currentPage === PagesEnum.Single &&
@@ -174,6 +240,10 @@ class App extends React.Component<MyProps, MyState> {
               onArticleBackEvent={handleEventBack}
               onArticleMoreEvent={handleEventSingle}
             />
+          ) : null}
+
+          {this.state.isLoading === true ? (
+            <div className="loader"></div>
           ) : null}
         </Container>
       </div>
