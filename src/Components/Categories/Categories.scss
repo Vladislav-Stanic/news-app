@@ -1,0 +1,72 @@
+.capitalize {
+  text-transform: capitalize;
+}
+
+.c-block {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease;
+
+  &.is-expanded {
+    max-height: 600px;
+  }
+}
+
+.panel-title {
+  align-items: center;
+  background-color: #e4e4e4;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
+  font-size: 18px;
+
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.toggler {
+  background-color: #6c757d;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  height: 24px;
+  width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .chevron {
+    position: relative;
+    display: block;
+    height: 16px; /*height should be double border*/
+    width: 16px;
+
+    &::before,
+    &::after {
+      position: absolute;
+      display: block;
+      content: "";
+      border: 8px solid transparent; /*adjust size*/
+    }
+
+    &::before {
+      top: 5px;
+      border-top-color: #fff; /*Chevron Color*/
+    }
+    &::after {
+      top: -10px; /*adjust thickness*/
+      border-top-color: #6c757d; /*Match background colour*/
+    }
+
+    &.up {
+      transform: rotate(180deg);
+
+      &::before {
+        top: 4px;
+        border-top-color: #fff; /*Chevron Color*/
+      }
+    }
+  }
+}

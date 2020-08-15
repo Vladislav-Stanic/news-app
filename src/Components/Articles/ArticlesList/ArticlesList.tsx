@@ -2,16 +2,15 @@ import React, { ReactElement } from "react";
 import "./ArticlesList.scss";
 
 import CardDeck from "react-bootstrap/CardDeck";
-import Button from "react-bootstrap/Button";
 
 import ArticleSingle from "../ArticleSingle/ArticleSingle";
+import Search from "../../Search/Search";
 
-import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
-import { Countries } from "../../Service/Countries";
-import { CountriesEnum } from "../../Service/CountriesEnum";
-import { DebounceInput } from "react-debounce-input";
-import { PagesEnum } from "../../Service/PagesEnum";
+import { Countries } from "../../../Service/Countries";
+import { CountriesEnum } from "../../../Service/CountriesEnum";
+import { PagesEnum } from "../../../Service/PagesEnum";
+import { ArticleInterface } from "../ArticleInterface";
 
 const articlesList = (props: {
   articles: ArticleInterface[];
@@ -19,28 +18,15 @@ const articlesList = (props: {
   currentPage: PagesEnum;
   searchTerm: string;
   category: string;
-  onArticleMoreEvent: (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    item: ArticleInterface
-  ) => void;
+  onArticleMoreEvent: (article: ArticleInterface) => void;
   onSearchEvent: (searchTerm: string) => void;
 }): ReactElement => {
-  const handleEventMore = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    item: ArticleInterface
-  ): void => {
-    props.onArticleMoreEvent(event, item);
-  };
   const handleEventBack = (): void => {
     // TODO: remove this
-  };
-  const handleEventSearch = (value: string): void => {
-    props.onSearchEvent(value);
   };
   const country: string = Countries.filter(
     (it) => it.code === props.countryCode
   ).map((it) => it.name)[0];
-  console.log("props.currentPage === ", props.currentPage);
   return (
     <div>
       {/* Header on top news */}
@@ -57,26 +43,11 @@ const articlesList = (props: {
 
       {/* Search input */}
       {props.currentPage === PagesEnum.Search ? (
-        <React.Fragment>
-          <h1>Search top news from {country} by term:</h1>
-          <div className="search-form">
-            <DebounceInput
-              minLength={2}
-              debounceTimeout={300}
-              value={props.searchTerm}
-              onChange={(e) => handleEventSearch(e.target.value)}
-              className={`form-control form-control-lg search-input`}
-            />
-            <Button
-              variant="secondary"
-              className="search-clear"
-              title="Clear"
-              onClick={() => handleEventSearch("")}
-            >
-              X
-            </Button>{" "}
-          </div>
-        </React.Fragment>
+        <Search
+          searchTerm={props.searchTerm}
+          country={country}
+          onSearchEvent={props.onSearchEvent}
+        />
       ) : null}
 
       {/* List of articles */}
@@ -90,7 +61,7 @@ const articlesList = (props: {
                 key={index}
                 item={item}
                 type={ArticleTypeEnum.SingleCard}
-                onArticleMoreEvent={handleEventMore}
+                onArticleMoreEvent={props.onArticleMoreEvent}
                 onArticleBackEvent={handleEventBack}
               />
             );

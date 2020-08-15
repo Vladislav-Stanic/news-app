@@ -1,5 +1,10 @@
-import { articlesUrl, country_code, category, api_key } from "./Config";
-import { ArticleInterface } from "../Articles/ArticleInterface";
+import {
+  articlesTopHeadlinesUrl,
+  country_code,
+  category,
+  api_key,
+} from "./Config";
+import { ArticleInterface } from "../Components/Articles/ArticleInterface";
 import { CountriesEnum } from "./CountriesEnum";
 
 export async function getArticles(
@@ -17,7 +22,7 @@ export async function getArticles(
   }
 
   try {
-    const urlBase = `${articlesUrl}?country=${countryCodePar}`;
+    const urlBase = `${articlesTopHeadlinesUrl}?country=${countryCodePar}`;
     let url = urlBase;
 
     if (searchTerm != null) {
@@ -39,8 +44,6 @@ export async function getArticles(
     });
 
     const result = await articles.json();
-    // articles = null;
-
     return result.articles;
   } catch {
     console.log("Error on request");

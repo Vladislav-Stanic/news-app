@@ -10,8 +10,14 @@
 
 .carousel-control-prev,
 .carousel-control-next {
-  background: rgba(0, 0, 0, 0.2);
+  background: #6c757d;
   height: 40px;
   top: 50%;
   transform: translateY(-50%);
+  width: 50px;
+}
+
+.slider-image {
+  height: 200px;
+  margin: 0 auto;
 }

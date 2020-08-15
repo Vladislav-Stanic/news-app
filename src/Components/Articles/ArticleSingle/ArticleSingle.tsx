@@ -2,24 +2,15 @@ import React, { ReactElement } from "react";
 
 import Card from "react-bootstrap/Card";
 import "./ArticleSingle.scss";
-import { ArticleInterface } from "../ArticleInterface";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
+import { ArticleInterface } from "../ArticleInterface";
 
 const articleCard = (props: {
   item: ArticleInterface;
   type: ArticleTypeEnum;
-  onArticleMoreEvent: (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    item: ArticleInterface
-  ) => void;
+  onArticleMoreEvent: (aticle: ArticleInterface) => void;
   onArticleBackEvent: () => void;
 }): ReactElement => {
-  const handleEventMore = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ): void => {
-    props.onArticleMoreEvent(event, props.item);
-  };
-
   return (
     <Card>
       <Card.Title>{props.item.title}</Card.Title>
@@ -35,7 +26,10 @@ const articleCard = (props: {
             <Card.Text>{props.item.description}</Card.Text>
           </Card.Body>
           <Card.Footer className="text-right">
-            <Card.Link href="#" onClick={handleEventMore}>
+            <Card.Link
+              href="#"
+              onClick={() => props.onArticleMoreEvent(props.item)}
+            >
               More &raquo;
             </Card.Link>
           </Card.Footer>

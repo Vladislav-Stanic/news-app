@@ -4,9 +4,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 
 import "./Header.scss";
-import { CountriesEnum } from "../Service/CountriesEnum";
-import { NavPagesEnum } from "../Service/NavPagesEnum";
-import { PagesEnum } from "../Service/PagesEnum";
+import { CountriesEnum } from "../../Service/CountriesEnum";
+import { NavPagesEnum } from "../../Service/NavPagesEnum";
+import { PagesEnum } from "../../Service/PagesEnum";
 
 // Used to extract values from PagesEnum as its keys and values differ
 declare type enumTypePages = keyof typeof NavPagesEnum;
