@@ -2,6 +2,24 @@
   text-transform: uppercase;
 }
 
+.navbar {
+  align-items: flex-start;
+  justify-content: space-between;
+
+  .nav-page {
+    width: 50%;
+  }
+
+  .nav-country {
+    flex-direction: row;
+
+    .country {
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+    }
+  }
+}
+
 .nav-link {
   &.active,
   &.disabled {

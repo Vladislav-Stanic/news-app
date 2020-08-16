@@ -122,15 +122,20 @@ class App extends React.Component<MyProps, MyState> {
   };
 
   // Change country
-  handleEventCountry = async (countryCode: CountriesEnum): Promise<void> => {
+  handleEventCountry = async (
+    countryCode: CountriesEnum,
+    route: string
+  ): Promise<void> => {
     this.setState({
+      isLoading: true,
       countryCode: countryCode,
     });
 
-    const route: string = this.state.history.location.pathname
-      .split("/")
-      .slice(2)
-      .join("/");
+    // const route: string = this.state.history.location.pathname
+    //   .split("/")
+    //   .slice(2)
+    //   .join("/");
+    // console.log("route ==== ", route);
 
     switch (route) {
       case "topNews":
@@ -140,6 +145,8 @@ class App extends React.Component<MyProps, MyState> {
         this.handleCategories();
         break;
       case "categorySingle":
+        console.log("this.state.category === ", this.state.category);
+        console.log("countryCode === ", countryCode);
         this.handleEventSingleCategory(this.state.category, countryCode);
         break;
       case "search":
@@ -211,7 +218,12 @@ class App extends React.Component<MyProps, MyState> {
     category: string,
     countryCode?: CountriesEnum
   ): void => {
-    const singleCategory = category || this.state.category;
+    this.setState({
+      isLoading: true,
+    });
+
+    const singleCategory = category !== "" ? category : this.state.category;
+
     getArticles(
       countryCode || this.state.countryCode,
       singleCategory,
@@ -219,6 +231,7 @@ class App extends React.Component<MyProps, MyState> {
       null
     ).then((it) => {
       this.setState({
+        isLoading: false,
         articles: it,
         category: singleCategory,
         countryDisabled: false,
@@ -246,7 +259,6 @@ class App extends React.Component<MyProps, MyState> {
           <Header
             countryCode={this.state.countryCode}
             countryDisabled={this.state.countryDisabled}
-            history={this.state.history}
             onPageEvent={this.handleEventPage}
             onCountryEvent={this.handleEventCountry}
           />

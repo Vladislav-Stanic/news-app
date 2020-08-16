@@ -1,3 +1,33 @@
 .card-title {
   padding: 1.25rem;
 }
+
+.single-article {
+  border: none;
+
+  .card-title,
+  .card-footer {
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .card-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.article-card {
+  h5 {
+    margin: 0;
+  }
+
+  .nav-link.title {
+    color: #212529;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

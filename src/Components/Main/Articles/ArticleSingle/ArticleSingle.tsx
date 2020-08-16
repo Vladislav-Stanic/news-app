@@ -21,8 +21,29 @@ const articleSingle = (props: {
     }
   };
   return (
-    <Card>
-      <Card.Title>{props.item.title}</Card.Title>
+    <Card
+      className={
+        props.type === ArticleTypeEnum.SingleDetails
+          ? "single-article"
+          : "article-card"
+      }
+    >
+      <Card.Title>
+        {props.type === ArticleTypeEnum.SingleCard ? (
+          <h5>
+            <Link
+              to={`/${props.countryCode}/articleSingle`}
+              className="nav-link title"
+              onClick={() => props.onArticleMoreEvent(props.item)}
+            >
+              {" "}
+              {props.item.title}
+            </Link>
+          </h5>
+        ) : (
+          <h3>{props.item.title}</h3>
+        )}
+      </Card.Title>
       <Card.Img
         variant="top"
         src={props.item.urlToImage || "https://via.placeholder.com/300x200"}
@@ -45,8 +66,7 @@ const articleSingle = (props: {
             </Link>
           </Card.Footer>
         </React.Fragment>
-      ) : null}
-      {props.type === ArticleTypeEnum.SingleDetails ? (
+      ) : (
         <React.Fragment>
           <Card.Body>
             <Card.Text>
@@ -54,14 +74,6 @@ const articleSingle = (props: {
             </Card.Text>
           </Card.Body>
           <Card.Footer className="text-left">
-            {/* <Link
-              to={`/`}
-              className="nav-link"
-              onClick={props.onArticleBackEvent}
-            >
-              {" "}
-              &laquo; Back
-            </Link> */}
             <Button
               variant="link"
               className="nav-link"
@@ -71,7 +83,7 @@ const articleSingle = (props: {
             </Button>
           </Card.Footer>
         </React.Fragment>
-      ) : null}
+      )}
     </Card>
   );
 };
