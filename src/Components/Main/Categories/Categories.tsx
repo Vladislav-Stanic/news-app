@@ -1,6 +1,4 @@
 import React, { ReactElement } from "react";
-import { CountriesEnum } from "../../Service/CountriesEnum";
-import { Countries } from "../../Service/Countries";
 import { CategoriesItem } from "./CategoriesItem";
 
 import ArticlesSlider from "../Articles/ArticlesSlider/ArticlesSlider";
@@ -10,15 +8,11 @@ import { ArticleInterface } from "../Articles/ArticleInterface";
 
 const categories = (props: {
   articlesPerCategory: CategoriesItem[];
-  countryCode: CountriesEnum;
+  country: string;
   handleEventSingleCategory: (name: string) => void;
-  handleEventSingleArticle: (article: ArticleInterface) => void;
+  onArticleMoreEvent: (article: ArticleInterface) => void;
   handleEventToggle: (index: number) => void;
 }): ReactElement => {
-  const country: string = Countries.filter(
-    (it) => it.code === props.countryCode
-  ).map((it) => it.name)[0];
-
   const handleEventCategory = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     name: string
@@ -29,7 +23,7 @@ const categories = (props: {
 
   return (
     <React.Fragment>
-      <h1>Top 5 news by categories from {country}:</h1>
+      <h1>Top 5 news by categories from {props.country}:</h1>
       {props.articlesPerCategory.map((it, index) => {
         return (
           <React.Fragment key={index}>
@@ -58,7 +52,7 @@ const categories = (props: {
             >
               <ArticlesSlider
                 articles={it.articles}
-                handleEventSingleArticle={props.handleEventSingleArticle}
+                onArticleMoreEvent={props.onArticleMoreEvent}
               />
             </div>
           </React.Fragment>

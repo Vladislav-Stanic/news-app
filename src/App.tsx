@@ -4,18 +4,21 @@ import "./App.scss";
 import Container from "react-bootstrap/Container";
 
 import Header from "./Components/Header/Header";
-import ArticlesList from "./Components/Articles/ArticlesList/ArticlesList";
-import ArticleCard from "./Components/Articles/ArticleSingle/ArticleSingle";
-import { ArticleTypeEnum } from "./Components/Articles/ArticleTypeEnum";
-import Categories from "./Components/Categories/Categories";
+import ArticlesList from "./Components/Main/Articles/ArticlesList/ArticlesList";
+import ArticleCard from "./Components/Main/Articles/ArticleSingle/ArticleSingle";
+import { ArticleTypeEnum } from "./Components/Main/Articles/ArticleTypeEnum";
+import Categories from "./Components/Main/Categories/Categories";
 
 import { CountriesEnum } from "./Service/CountriesEnum";
 import { country_code, CategoriesList } from "./Service/Config";
-import { CategoriesItem } from "./Components/Categories/CategoriesItem";
+import { CategoriesItem } from "./Components/Main/Categories/CategoriesItem";
 import { NavPagesEnum } from "./Service/NavPagesEnum";
 import { PagesEnum } from "./Service/PagesEnum";
 import { getArticles } from "./Service/Service";
-import { ArticleInterface } from "./Components/Articles/ArticleInterface";
+import { ArticleInterface } from "./Components/Main/Articles/ArticleInterface";
+
+import { BrowserRouter } from "react-router-dom";
+import Main from "./Components/Main/Main";
 
 type MyProps = unknown;
 type MyState = {
@@ -52,7 +55,7 @@ class App extends React.Component<MyProps, MyState> {
 
   componentDidMount(): void {
     getArticles(null, null, null, null).then((it) => {
-      console.log("it =========== ", it);
+      console.log("it 11111111 ", it);
       this.setState({
         isLoading: false,
         articles: it,
@@ -60,6 +63,17 @@ class App extends React.Component<MyProps, MyState> {
       });
     });
   }
+
+  // handleEventTopNews(): void {
+  //   getArticles(this.state.countryCode, null, null, null).then((it) => {
+  //     console.log("it 222222222 ", it);
+  //     this.setState({
+  //       isLoading: false,
+  //       articles: it,
+  //       articleSingle: null,
+  //     });
+  //   });
+  // }
 
   // Navigate to single article
   handleEventSingle = (article: ArticleInterface): void => {
@@ -85,11 +99,10 @@ class App extends React.Component<MyProps, MyState> {
   // Navigate to a page
   handleEventPage = async (page: NavPagesEnum): Promise<void> => {
     switch (page) {
-      case NavPagesEnum.Categories:
+      case NavPagesEnum.categories:
         this.setState({
           isLoading: true,
         });
-
         const categories: CategoriesItem[] = [];
         for (const item of CategoriesList) {
           categories.push({
@@ -103,7 +116,6 @@ class App extends React.Component<MyProps, MyState> {
             hidden: true,
           });
         }
-
         this.setState({
           isLoading: false,
           articleSingle: null,
@@ -112,25 +124,41 @@ class App extends React.Component<MyProps, MyState> {
           articlesPerCategory: categories,
         });
         break;
-      case NavPagesEnum.Search:
-        this.setState({
-          articleSingle: null,
-          countryDisabled: false,
-          currentPage: PagesEnum.Search,
+      case NavPagesEnum.search:
+        getArticles(
+          this.state.countryCode,
+          null,
+          null,
+          this.state.searchTerm
+        ).then((it) => {
+          this.setState({
+            articles: it,
+            articleSingle: null,
+            countryDisabled: false,
+            // searchTerm: "",
+            // currentPage: PagesEnum.TopNews,
+            category: "",
+          });
         });
+
+        // this.setState({
+        //   articleSingle: null,
+        //   countryDisabled: false,
+        //   // currentPage: PagesEnum.Search,
+        // });
         break;
-      case NavPagesEnum.TopNews:
-      default:
+      case NavPagesEnum.topNews:
         getArticles(this.state.countryCode, null, null, null).then((it) => {
           this.setState({
             articles: it,
             articleSingle: null,
             countryDisabled: false,
-            searchTerm: "",
-            currentPage: PagesEnum.TopNews,
+            // searchTerm: "",
+            // currentPage: PagesEnum.TopNews,
             category: "",
           });
         });
+      default:
         break;
     }
   };
@@ -204,16 +232,29 @@ class App extends React.Component<MyProps, MyState> {
 
   render(): ReactElement {
     return (
-      <div className="App">
-        <Header
-          country={this.state.countryCode}
-          countryDisabled={this.state.countryDisabled}
-          currentPage={this.state.currentPage}
-          onPageEvent={this.handleEventPage}
-          onCountryEvent={this.handleEventCountry}
-        />
+      <BrowserRouter>
+        <div className="App">
+          <Header
+            country={this.state.countryCode}
+            countryDisabled={this.state.countryDisabled}
+            currentPage={this.state.currentPage}
+            onPageEvent={this.handleEventPage}
+            onCountryEvent={this.handleEventCountry}
+          />
+          <Main
+            {...this.state}
+            onArticleMoreEvent={this.handleEventSingle}
+            onSearchEvent={this.handleEventSearch}
+            onArticleBackEvent={this.handleEventBack}
+            onSingleCategory={this.handleEventSingleCategory}
+            onToggleCategory={this.handleEventToggle}
+          />
+        </div>
+      </BrowserRouter>
+    );
 
-        <Container className="container-main">
+    {
+      /* <Container className="container-main">
           {this.state.currentPage === PagesEnum.TopNews ||
           this.state.currentPage === PagesEnum.Search ||
           this.state.currentPage === PagesEnum.CategorySingle ? (
@@ -250,9 +291,8 @@ class App extends React.Component<MyProps, MyState> {
           {this.state.isLoading === true ? (
             <div className="loader"></div>
           ) : null}
-        </Container>
-      </div>
-    );
+        </Container> */
+    }
   }
 }
 

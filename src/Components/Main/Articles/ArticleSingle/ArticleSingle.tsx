@@ -4,11 +4,12 @@ import Card from "react-bootstrap/Card";
 import "./ArticleSingle.scss";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 import { ArticleInterface } from "../ArticleInterface";
+import { Link } from "react-router-dom";
 
-const articleCard = (props: {
+const articleSingle = (props: {
   item: ArticleInterface;
   type: ArticleTypeEnum;
-  onArticleMoreEvent: (aticle: ArticleInterface) => void;
+  onArticleMoreEvent: (article: ArticleInterface) => void;
   onArticleBackEvent: () => void;
 }): ReactElement => {
   return (
@@ -26,12 +27,14 @@ const articleCard = (props: {
             <Card.Text>{props.item.description}</Card.Text>
           </Card.Body>
           <Card.Footer className="text-right">
-            <Card.Link
-              href="#"
+            <Link
+              to={`/articleSingle`}
+              className="nav-link"
               onClick={() => props.onArticleMoreEvent(props.item)}
             >
+              {" "}
               More &raquo;
-            </Card.Link>
+            </Link>
           </Card.Footer>
         </React.Fragment>
       ) : null}
@@ -43,9 +46,14 @@ const articleCard = (props: {
             </Card.Text>
           </Card.Body>
           <Card.Footer className="text-left">
-            <Card.Link href="#" onClick={props.onArticleBackEvent}>
+            <Link
+              to={`/`}
+              className="nav-link"
+              onClick={props.onArticleBackEvent}
+            >
+              {" "}
               &laquo; Back
-            </Card.Link>
+            </Link>
           </Card.Footer>
         </React.Fragment>
       ) : null}
@@ -53,4 +61,4 @@ const articleCard = (props: {
   );
 };
 
-export default articleCard;
+export default articleSingle;

@@ -7,6 +7,7 @@ import "./Header.scss";
 import { CountriesEnum } from "../../Service/CountriesEnum";
 import { NavPagesEnum } from "../../Service/NavPagesEnum";
 import { PagesEnum } from "../../Service/PagesEnum";
+import { Link } from "react-router-dom";
 
 // Used to extract values from PagesEnum as its keys and values differ
 declare type enumTypePages = keyof typeof NavPagesEnum;
@@ -24,21 +25,37 @@ const header = (props: {
 
   return (
     <Navbar sticky="top" bg="light" expand="lg">
-      <Nav className="mr-auto">
+      <Nav className="mr-auto" defaultActiveKey="/topNews">
         {Object.keys(NavPagesEnum).map((it: string, index: number) => {
           const enumdata: string = NavPagesEnum[it as enumTypePages];
           return (
-            <Nav.Link
+            <Link
               key={index}
-              href={`#${it}`}
-              active={PagesEnum[props.currentPage] === (it as unknown)}
+              to={`/${it}`}
+              className="nav-link"
+              // active={PagesEnum[props.currentPage] === (it as unknown)}
               onClick={() => props.onPageEvent(enumdata as NavPagesEnum)}
             >
               {" "}
               {enumdata}
-            </Nav.Link>
+            </Link>
           );
         })}{" "}
+        {/* <div>
+          <Link className="nav-link" to="/topNews">
+            Top News
+          </Link>
+        </div>
+        <div>
+          <Link className="nav-link" to="/categories">
+            Categories
+          </Link>
+        </div>
+        <div>
+          <Link className="nav-link" to="/search">
+            Search
+          </Link>
+        </div> */}
       </Nav>
       {/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
       {/* <Navbar.Collapse id="basic-navbar-nav">

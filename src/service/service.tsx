@@ -4,7 +4,7 @@ import {
   category,
   api_key,
 } from "./Config";
-import { ArticleInterface } from "../Components/Articles/ArticleInterface";
+import { ArticleInterface } from "../Components/Main/Articles/ArticleInterface";
 import { CountriesEnum } from "./CountriesEnum";
 
 export async function getArticles(

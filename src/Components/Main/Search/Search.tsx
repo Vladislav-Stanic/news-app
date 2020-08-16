@@ -4,10 +4,14 @@ import Button from "react-bootstrap/Button";
 import { DebounceInput } from "react-debounce-input";
 
 import "./Search.scss";
+import ArticlesList from "../Articles/ArticlesList/ArticlesList";
+import { ArticleInterface } from "../Articles/ArticleInterface";
 
 const search = (props: {
+  articles: ArticleInterface[];
   searchTerm: string;
   country: string;
+  onArticleMoreEvent: (article: ArticleInterface) => void;
   onSearchEvent: (searchTerm: string) => void;
 }): ReactElement => {
   const handleEventSearch = (value: string): void => {
@@ -35,6 +39,12 @@ const search = (props: {
             X
           </Button>{" "}
         </div>
+
+        {/* List of articles */}
+        <ArticlesList
+          articles={props.articles}
+          onArticleMoreEvent={props.onArticleMoreEvent}
+        />
       </React.Fragment>
     </div>
   );
