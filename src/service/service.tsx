@@ -4,7 +4,7 @@ import {
   category,
   api_key,
 } from "./Config";
-import { ArticleInterface } from "../Components/Articles/ArticleInterface";
+import { ArticleInterface } from "../Components/Main/Articles/ArticleInterface";
 import { CountriesEnum } from "./CountriesEnum";
 
 export async function getArticles(
@@ -35,7 +35,7 @@ export async function getArticles(
       }
     }
 
-    console.log("url ======== ", url);
+    // console.log("url ======== ", url);
 
     const articles: Response = await fetch(url, {
       headers: {
@@ -46,7 +46,7 @@ export async function getArticles(
     const result = await articles.json();
     return result.articles;
   } catch {
-    console.log("Error on request");
+    console.log("Error on request!");
     return [];
   }
 }

@@ -2,10 +2,10 @@
 
 h1 {
   margin-bottom: 1rem;
-}
 
-a {
-  color: #000;
+  @media (max-width: 576px) {
+    font-size: 2rem;
+  }
 }
 
 img {

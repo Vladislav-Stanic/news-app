@@ -1,7 +1,7 @@
 export enum PagesEnum {
-  TopNews,
-  Categories,
-  CategorySingle,
-  Search,
-  Single,
+  topNews,
+  categories,
+  categorySingle,
+  search,
+  single,
 }

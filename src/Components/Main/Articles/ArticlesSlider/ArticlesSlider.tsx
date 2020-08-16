@@ -3,10 +3,13 @@ import React, { ReactElement } from "react";
 import Carousel from "react-bootstrap/Carousel";
 import "./ArticlesSlider.scss";
 import { ArticleInterface } from "../ArticleInterface";
+import { Link } from "react-router-dom";
+import { CountriesEnum } from "../../../../Service/CountriesEnum";
 
 const articlesSlider = (props: {
   articles: ArticleInterface[];
-  handleEventSingleArticle: (article: ArticleInterface) => void;
+  countryCode: CountriesEnum;
+  onArticleMoreEvent: (article: ArticleInterface) => void;
 }): ReactElement => {
   return (
     <Carousel>
@@ -21,9 +24,14 @@ const articlesSlider = (props: {
             />
             <Carousel.Caption>
               <h5>
-                <a href="#" onClick={() => props.handleEventSingleArticle(it)}>
+                <Link
+                  to={`/${props.countryCode}/articleSingle`}
+                  className="nav-link"
+                  onClick={() => props.onArticleMoreEvent(it)}
+                >
+                  {" "}
                   {it.title}
-                </a>
+                </Link>
               </h5>
             </Carousel.Caption>
           </Carousel.Item>

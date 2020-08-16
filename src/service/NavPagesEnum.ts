@@ -1,5 +1,5 @@
 export enum NavPagesEnum {
-  TopNews = "Top News",
-  Categories = "Categories",
-  Search = "Search",
+  topNews = "Top News",
+  categories = "Categories",
+  search = "Search",
 }
