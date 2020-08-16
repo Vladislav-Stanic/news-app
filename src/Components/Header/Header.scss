@@ -1,0 +1,19 @@
+.nav-link.country {
+  text-transform: uppercase;
+}
+
+.nav-link {
+  &.active,
+  &.disabled {
+    pointer-events: none;
+  }
+
+  &.active {
+    color: #000000 !important;
+    font-weight: bold;
+  }
+
+  &.disabled {
+    opacity: 0.4;
+  }
+}

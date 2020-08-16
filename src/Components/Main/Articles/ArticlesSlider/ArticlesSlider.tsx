@@ -4,9 +4,11 @@ import Carousel from "react-bootstrap/Carousel";
 import "./ArticlesSlider.scss";
 import { ArticleInterface } from "../ArticleInterface";
 import { Link } from "react-router-dom";
+import { CountriesEnum } from "../../../../Service/CountriesEnum";
 
 const articlesSlider = (props: {
   articles: ArticleInterface[];
+  countryCode: CountriesEnum;
   onArticleMoreEvent: (article: ArticleInterface) => void;
 }): ReactElement => {
   return (
@@ -23,7 +25,7 @@ const articlesSlider = (props: {
             <Carousel.Caption>
               <h5>
                 <Link
-                  to={`/articleSingle`}
+                  to={`/${props.countryCode}/articleSingle`}
                   className="nav-link"
                   onClick={() => props.onArticleMoreEvent(it)}
                 >

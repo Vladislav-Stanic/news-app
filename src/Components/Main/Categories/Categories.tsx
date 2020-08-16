@@ -5,10 +5,13 @@ import ArticlesSlider from "../Articles/ArticlesSlider/ArticlesSlider";
 
 import "./Categories.scss";
 import { ArticleInterface } from "../Articles/ArticleInterface";
+import { Link } from "react-router-dom";
+import { CountriesEnum } from "../../../Service/CountriesEnum";
 
 const categories = (props: {
   articlesPerCategory: CategoriesItem[];
   country: string;
+  countryCode: CountriesEnum;
   handleEventSingleCategory: (name: string) => void;
   onArticleMoreEvent: (article: ArticleInterface) => void;
   handleEventToggle: (index: number) => void;
@@ -31,12 +34,14 @@ const categories = (props: {
               className="panel-title"
               onClick={() => props.handleEventToggle(index)}
             >
-              <a
-                href="#"
+              <Link
+                to={`/${props.countryCode}/categorySingle`}
                 onClick={(event) => handleEventCategory(event, it.name)}
               >
+                {" "}
                 <span className="capitalize">{it.name}</span>
-              </a>
+              </Link>
+
               <div className="toggler">
                 <i
                   className={`chevron
@@ -52,6 +57,7 @@ const categories = (props: {
             >
               <ArticlesSlider
                 articles={it.articles}
+                countryCode={props.countryCode}
                 onArticleMoreEvent={props.onArticleMoreEvent}
               />
             </div>

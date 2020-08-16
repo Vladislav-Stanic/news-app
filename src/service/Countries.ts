@@ -2,11 +2,11 @@ import { CountriesEnum } from "./CountriesEnum";
 
 export const Countries = [
   {
-    code: CountriesEnum.GB,
+    code: CountriesEnum.gb,
     name: "Great Britain",
   },
   {
-    code: CountriesEnum.US,
+    code: CountriesEnum.us,
     name: "United States",
   },
 ];

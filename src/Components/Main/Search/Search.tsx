@@ -6,11 +6,13 @@ import { DebounceInput } from "react-debounce-input";
 import "./Search.scss";
 import ArticlesList from "../Articles/ArticlesList/ArticlesList";
 import { ArticleInterface } from "../Articles/ArticleInterface";
+import { CountriesEnum } from "../../../Service/CountriesEnum";
 
 const search = (props: {
   articles: ArticleInterface[];
   searchTerm: string;
   country: string;
+  countryCode: CountriesEnum;
   onArticleMoreEvent: (article: ArticleInterface) => void;
   onSearchEvent: (searchTerm: string) => void;
 }): ReactElement => {
@@ -43,6 +45,7 @@ const search = (props: {
         {/* List of articles */}
         <ArticlesList
           articles={props.articles}
+          countryCode={props.countryCode}
           onArticleMoreEvent={props.onArticleMoreEvent}
         />
       </React.Fragment>

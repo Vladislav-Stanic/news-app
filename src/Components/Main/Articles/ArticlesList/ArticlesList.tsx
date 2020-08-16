@@ -7,30 +7,32 @@ import ArticleSingle from "../ArticleSingle/ArticleSingle";
 
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 import { ArticleInterface } from "../ArticleInterface";
+import { CountriesEnum } from "../../../../Service/CountriesEnum";
 
 const articlesList = (props: {
   articles: ArticleInterface[];
+  countryCode: CountriesEnum;
   onArticleMoreEvent: (article: ArticleInterface) => void;
-  // onSearchEvent: (searchTerm: string) => void;
 }): ReactElement => {
-  const handleEventBack = (): void => {
-    // TODO: remove this
-  };
   return (
     <div>
-      <CardDeck>
-        {props.articles.map((item: ArticleInterface, index: number) => {
-          return (
-            <ArticleSingle
-              key={index}
-              item={item}
-              type={ArticleTypeEnum.SingleCard}
-              onArticleMoreEvent={props.onArticleMoreEvent}
-              onArticleBackEvent={handleEventBack}
-            />
-          );
-        })}{" "}
-      </CardDeck>
+      {props.articles.length ? (
+        <CardDeck>
+          {props.articles.map((item: ArticleInterface, index: number) => {
+            return (
+              <ArticleSingle
+                key={index}
+                item={item}
+                type={ArticleTypeEnum.SingleCard}
+                countryCode={props.countryCode}
+                onArticleMoreEvent={props.onArticleMoreEvent}
+              />
+            );
+          })}{" "}
+        </CardDeck>
+      ) : (
+        <h4>No results.</h4>
+      )}
     </div>
   );
 };

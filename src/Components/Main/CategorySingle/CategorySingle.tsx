@@ -4,16 +4,19 @@ import { ArticleInterface } from "../Articles/ArticleInterface";
 import ArticlesList from "../Articles/ArticlesList/ArticlesList";
 import { CountriesEnum } from "../../../Service/CountriesEnum";
 
-const topNews = (props: {
+const categorySingle = (props: {
   articles: ArticleInterface[];
   country: string;
   countryCode: CountriesEnum;
+  category: string;
   onArticleMoreEvent: (article: ArticleInterface) => void;
 }): ReactElement => {
   return (
     <div>
-      {/* Header on top news */}
-      <h1>Top news from {props.country}:</h1>
+      {/* Header on Category single news */}
+      <h1>
+        Top {props.category} news from {props.country}:
+      </h1>
 
       {/* List of articles */}
       <ArticlesList
@@ -25,4 +28,4 @@ const topNews = (props: {
   );
 };
 
-export default topNews;
+export default categorySingle;

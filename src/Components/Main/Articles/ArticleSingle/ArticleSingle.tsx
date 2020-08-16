@@ -5,13 +5,21 @@ import "./ArticleSingle.scss";
 import { ArticleTypeEnum } from "../ArticleTypeEnum";
 import { ArticleInterface } from "../ArticleInterface";
 import { Link } from "react-router-dom";
+import { CountriesEnum } from "../../../../Service/CountriesEnum";
+import Button from "react-bootstrap/esm/Button";
 
 const articleSingle = (props: {
   item: ArticleInterface;
   type: ArticleTypeEnum;
+  countryCode: CountriesEnum;
   onArticleMoreEvent: (article: ArticleInterface) => void;
-  onArticleBackEvent: () => void;
+  onArticleBackEvent?: () => void;
 }): ReactElement => {
+  const handleEventback = () => {
+    if (props.onArticleBackEvent != null) {
+      props.onArticleBackEvent();
+    }
+  };
   return (
     <Card>
       <Card.Title>{props.item.title}</Card.Title>
@@ -28,7 +36,7 @@ const articleSingle = (props: {
           </Card.Body>
           <Card.Footer className="text-right">
             <Link
-              to={`/articleSingle`}
+              to={`/${props.countryCode}/articleSingle`}
               className="nav-link"
               onClick={() => props.onArticleMoreEvent(props.item)}
             >
@@ -46,14 +54,21 @@ const articleSingle = (props: {
             </Card.Text>
           </Card.Body>
           <Card.Footer className="text-left">
-            <Link
+            {/* <Link
               to={`/`}
               className="nav-link"
               onClick={props.onArticleBackEvent}
             >
               {" "}
               &laquo; Back
-            </Link>
+            </Link> */}
+            <Button
+              variant="link"
+              className="nav-link"
+              onClick={() => handleEventback()}
+            >
+              &laquo; Back
+            </Button>
           </Card.Footer>
         </React.Fragment>
       ) : null}
