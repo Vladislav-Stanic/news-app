@@ -7,7 +7,7 @@ import { CountriesEnum } from "./Service/CountriesEnum";
 import { country_code, CategoriesList } from "./Service/Config";
 import { CategoriesItem } from "./Components/Main/Categories/CategoriesItem";
 import { NavPagesEnum } from "./Service/NavPagesEnum";
-import { getArticles } from "./Service/Service";
+import { getArticles } from "./Service/service";
 import { ArticleInterface } from "./Components/Main/Articles/ArticleInterface";
 
 import { BrowserRouter } from "react-router-dom";
