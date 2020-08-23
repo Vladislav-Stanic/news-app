@@ -1,14 +1,14 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement } from 'react';
 
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 
-import "./Header.scss";
-import { CountriesEnum } from "../../Service/CountriesEnum";
-import { NavPagesEnum } from "../../Service/NavPagesEnum";
-import { Link, NavLink } from "react-router-dom";
+import './Header.scss';
+import { CountriesEnum } from '../../Service/CountriesEnum';
+import { NavPagesEnum } from '../../Service/NavPagesEnum';
+import { Link, NavLink } from 'react-router-dom';
 
-import createHistory from "history/createBrowserHistory";
+import { createBrowserHistory } from 'history';
 
 // Used to extract values from PagesEnum as its keys and values differ
 declare type enumTypePages = keyof typeof NavPagesEnum;
@@ -20,8 +20,12 @@ const header = (props: {
   onPageEvent: (page: NavPagesEnum) => void;
 }): ReactElement => {
   // Get current route
-  const history = createHistory();
-  const route: string = history.location.pathname.split("/").slice(2).join("/");
+  const historyData = createBrowserHistory();
+  const route: string = historyData.location.pathname
+    .split('/')
+    .slice(2)
+    .join('/');
+  const linksInNav: string[] = ['top-news', 'categories', 'search'];
 
   return (
     <Navbar sticky="top" bg="light" expand="sm">
@@ -30,23 +34,23 @@ const header = (props: {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav
             className="mr-auto"
-            defaultActiveKey={`${props.countryCode}/topNews`}
+            defaultActiveKey={`${props.countryCode}/top-news`}
           >
             {Object.keys(NavPagesEnum).map((it: string, index: number) => {
               const enumdata: string = NavPagesEnum[it as enumTypePages];
               return (
                 <NavLink
                   key={index}
-                  to={`/${props.countryCode}/${it}`}
+                  to={`/${props.countryCode}/${linksInNav[index]}`}
                   className="nav-link"
                   activeClassName="active"
                   onClick={() => props.onPageEvent(enumdata as NavPagesEnum)}
                 >
-                  {" "}
+                  {' '}
                   {enumdata}
                 </NavLink>
               );
-            })}{" "}
+            })}{' '}
           </Nav>
         </Navbar.Collapse>
       </div>
@@ -58,8 +62,8 @@ const header = (props: {
                 key={index}
                 to={`/${it}/${route}`}
                 className={`nav-link country
-                ${props.countryCode === it ? "active" : ""}
-                ${props.countryDisabled ? "disabled" : ""}
+                ${props.countryCode === it ? 'active' : ''}
+                ${props.countryDisabled ? 'disabled' : ''}
               `}
                 onClick={() => props.onCountryEvent(it, route)}
               >
@@ -67,7 +71,7 @@ const header = (props: {
               </Link>
             );
           }
-        )}{" "}
+        )}{' '}
       </Nav>
     </Navbar>
   );

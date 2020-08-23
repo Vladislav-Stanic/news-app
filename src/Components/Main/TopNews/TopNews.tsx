@@ -1,14 +1,16 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement } from 'react';
 
-import { ArticleInterface } from "../Articles/ArticleInterface";
-import ArticlesList from "../Articles/ArticlesList/ArticlesList";
-import { CountriesEnum } from "../../../Service/CountriesEnum";
+import { ArticleInterface } from '../Articles/ArticleInterface';
+import ArticlesList from '../Articles/ArticlesList/ArticlesList';
+import { CountriesEnum } from '../../../Service/CountriesEnum';
 
 const topNews = (props: {
   articles: ArticleInterface[];
   country: string;
   countryCode: CountriesEnum;
+  hasMoreOnScroll: boolean;
   onArticleMoreEvent: (article: ArticleInterface) => void;
+  onFetchMoreData: () => any;
 }): ReactElement => {
   return (
     <div>
@@ -19,7 +21,9 @@ const topNews = (props: {
       <ArticlesList
         articles={props.articles}
         countryCode={props.countryCode}
+        hasMoreOnScroll={props.hasMoreOnScroll}
         onArticleMoreEvent={props.onArticleMoreEvent}
+        onFetchMoreData={props.onFetchMoreData}
       />
     </div>
   );

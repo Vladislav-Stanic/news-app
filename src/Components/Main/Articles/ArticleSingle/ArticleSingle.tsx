@@ -1,12 +1,12 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement } from 'react';
 
-import Card from "react-bootstrap/Card";
-import "./ArticleSingle.scss";
-import { ArticleTypeEnum } from "../ArticleTypeEnum";
-import { ArticleInterface } from "../ArticleInterface";
-import { Link } from "react-router-dom";
-import { CountriesEnum } from "../../../../Service/CountriesEnum";
-import Button from "react-bootstrap/esm/Button";
+import Card from 'react-bootstrap/Card';
+import './ArticleSingle.scss';
+import { ArticleTypeEnum } from '../ArticleTypeEnum';
+import { ArticleInterface } from '../ArticleInterface';
+import { Link } from 'react-router-dom';
+import { CountriesEnum } from '../../../../Service/CountriesEnum';
+import Button from 'react-bootstrap/esm/Button';
 
 const articleSingle = (props: {
   item: ArticleInterface;
@@ -24,19 +24,19 @@ const articleSingle = (props: {
     <Card
       className={
         props.type === ArticleTypeEnum.SingleDetails
-          ? "single-article"
-          : "article-card"
+          ? 'single-article'
+          : 'article-card'
       }
     >
       <Card.Title>
         {props.type === ArticleTypeEnum.SingleCard ? (
           <h5>
             <Link
-              to={`/${props.countryCode}/articleSingle`}
+              to={`/${props.countryCode}/article-single`}
               className="nav-link title"
               onClick={() => props.onArticleMoreEvent(props.item)}
             >
-              {" "}
+              {' '}
               {props.item.title}
             </Link>
           </h5>
@@ -46,7 +46,7 @@ const articleSingle = (props: {
       </Card.Title>
       <Card.Img
         variant="top"
-        src={props.item.urlToImage || "https://via.placeholder.com/300x200"}
+        src={props.item.urlToImage || 'https://via.placeholder.com/300x200'}
         alt={props.item.title}
         title={props.item.title}
       />
@@ -57,11 +57,11 @@ const articleSingle = (props: {
           </Card.Body>
           <Card.Footer className="text-right">
             <Link
-              to={`/${props.countryCode}/articleSingle`}
+              to={`/${props.countryCode}/article-single`}
               className="nav-link"
               onClick={() => props.onArticleMoreEvent(props.item)}
             >
-              {" "}
+              {' '}
               More &raquo;
             </Link>
           </Card.Footer>

@@ -1,18 +1,18 @@
-import React, { ReactElement } from "react";
-import "./App.scss";
+import React, { ReactElement } from 'react';
+import './App.scss';
 
-import Header from "./Components/Header/Header";
+import Header from './Components/Header/Header';
 
-import { CountriesEnum } from "./Service/CountriesEnum";
-import { country_code, CategoriesList } from "./Service/Config";
-import { CategoriesItem } from "./Components/Main/Categories/CategoriesItem";
-import { NavPagesEnum } from "./Service/NavPagesEnum";
-import { getArticles } from "./Service/service";
-import { ArticleInterface } from "./Components/Main/Articles/ArticleInterface";
+import { CountriesEnum } from './Service/CountriesEnum';
+import { country_code, CategoriesList } from './Service/Config';
+import { CategoriesItem } from './Components/Main/Categories/CategoriesItem';
+import { NavPagesEnum } from './Service/NavPagesEnum';
+import { getArticles, getArticlesPerCategory } from './Service/service';
+import { ArticleInterface } from './Components/Main/Articles/ArticleInterface';
 
-import { BrowserRouter } from "react-router-dom";
-import Main from "./Components/Main/Main";
-import createHistory from "history/createBrowserHistory";
+import { BrowserRouter } from 'react-router-dom';
+import Main from './Components/Main/Main';
+import { createBrowserHistory } from 'history';
 
 type MyProps = unknown;
 type MyState = {
@@ -26,6 +26,8 @@ type MyState = {
   articlesPerCategory: CategoriesItem[];
   results: string | null;
   history: any;
+  pageNumber: number;
+  hasMoreOnScroll: boolean;
 };
 
 class App extends React.Component<MyProps, MyState> {
@@ -33,20 +35,20 @@ class App extends React.Component<MyProps, MyState> {
     super(props);
 
     // Extract params from url
-    const history = createHistory();
-    const pathname = history.location.pathname;
-    const countryFromParams = pathname.split("/")[1] as CountriesEnum;
-    const route = pathname.split("/").slice(2).join("/");
+    const historyData = createBrowserHistory();
+    const pathname = historyData.location.pathname;
+    const countryFromParams = pathname.split('/')[1] as CountriesEnum;
+    const route = pathname.split('/').slice(2).join('/');
 
     // Go to the default page if no country or route
     if (
-      pathname === "/" ||
-      route === "" ||
-      route === "articleSingle" ||
-      route === "categorySingle" ||
+      pathname === '/' ||
+      route === '' ||
+      route === 'article-single' ||
+      route === 'category-single' ||
       !Object.values(CountriesEnum).includes(countryFromParams)
     ) {
-      history.push(`/${country_code}/topNews`);
+      historyData.push(`/${country_code}/top-news`);
     }
 
     this.state = {
@@ -54,33 +56,38 @@ class App extends React.Component<MyProps, MyState> {
       articles: [],
       articleSingle: null,
       countryCode: countryFromParams,
-      category: "",
-      searchTerm: "",
+      category: '',
+      searchTerm: '',
       articlesPerCategory: [],
       results: null,
       countryDisabled: false,
-      history: history,
+      history: historyData,
+      pageNumber: 1,
+      hasMoreOnScroll: true,
     };
   }
 
   // Mount (depends on parameters in url)
   componentDidMount(): void {
     const route: string = this.state.history.location.pathname
-      .split("/")
+      .split('/')
       .slice(2)
-      .join("/");
+      .join('/');
 
     switch (route) {
-      case "topNews":
+      case 'top-news':
         this.handleTopNews();
         break;
-      case "categories":
+      case 'categories':
         this.handleCategories();
         break;
-      case "search":
-        this.handleEventSearch("");
+      case 'search':
+        this.handleEventSearch('');
         break;
       default:
+        this.setState({
+          isLoading: false,
+        });
         break;
     }
   }
@@ -106,15 +113,25 @@ class App extends React.Component<MyProps, MyState> {
 
   // Navigate to a page
   handleEventPage = async (page: NavPagesEnum): Promise<void> => {
+    window.scrollTo(0, 0);
+
+    this.setState({
+      pageNumber: 1,
+    });
+
     switch (page) {
       case NavPagesEnum.topNews:
-        this.handleTopNews();
+        this.handleTopNews(this.state.countryCode, 1);
         break;
       case NavPagesEnum.categories:
         this.handleCategories();
         break;
       case NavPagesEnum.search:
-        this.handleEventSearch(this.state.searchTerm);
+        this.handleEventSearch(
+          this.state.searchTerm,
+          this.state.countryCode,
+          1
+        );
         break;
       default:
         break;
@@ -126,31 +143,26 @@ class App extends React.Component<MyProps, MyState> {
     countryCode: CountriesEnum,
     route: string
   ): Promise<void> => {
+    window.scrollTo(0, 0);
+
     this.setState({
       isLoading: true,
       countryCode: countryCode,
+      pageNumber: 1,
     });
 
-    // const route: string = this.state.history.location.pathname
-    //   .split("/")
-    //   .slice(2)
-    //   .join("/");
-    // console.log("route ==== ", route);
-
     switch (route) {
-      case "topNews":
-        this.handleTopNews(countryCode);
+      case 'top-news':
+        this.handleTopNews(countryCode, 1);
         break;
-      case "categories":
+      case 'categories':
         this.handleCategories();
         break;
-      case "categorySingle":
-        console.log("this.state.category === ", this.state.category);
-        console.log("countryCode === ", countryCode);
-        this.handleEventSingleCategory(this.state.category, countryCode);
+      case 'category-single':
+        this.handleEventSingleCategory(this.state.category, countryCode, 1);
         break;
-      case "search":
-        this.handleEventSearch(this.state.searchTerm, countryCode);
+      case 'search':
+        this.handleEventSearch(this.state.searchTerm, countryCode, 1);
         break;
       default:
         break;
@@ -158,18 +170,25 @@ class App extends React.Component<MyProps, MyState> {
   };
 
   // Get top news
-  async handleTopNews(countryCode?: CountriesEnum): Promise<void> {
-    getArticles(countryCode || this.state.countryCode, null, null, null).then(
-      (it) => {
-        this.setState({
-          isLoading: false,
-          articles: it,
-          articleSingle: null,
-          category: "",
-          countryDisabled: false,
-        });
-      }
-    );
+  async handleTopNews(
+    countryCode?: CountriesEnum,
+    pageNumber?: number
+  ): Promise<void> {
+    getArticles(
+      countryCode || this.state.countryCode,
+      null,
+      null,
+      pageNumber || this.state.pageNumber
+    ).then((it) => {
+      this.setState({
+        isLoading: false,
+        articles: it,
+        articleSingle: null,
+        category: '',
+        countryDisabled: false,
+        hasMoreOnScroll: it.length > 0,
+      });
+    });
   }
 
   // Get categories
@@ -178,10 +197,11 @@ class App extends React.Component<MyProps, MyState> {
       isLoading: true,
     });
     const categories: CategoriesItem[] = [];
-    for (const item of CategoriesList) {
+    const results = await getArticlesPerCategory(this.state.countryCode);
+    for (let i = 0; i < CategoriesList.length; i++) {
       categories.push({
-        name: item,
-        articles: await getArticles(this.state.countryCode, item, "5", null),
+        name: CategoriesList[i],
+        articles: results[i].articles,
         hidden: true,
       });
     }
@@ -196,19 +216,21 @@ class App extends React.Component<MyProps, MyState> {
   // Enter search term
   handleEventSearch = (
     searchTerm: string,
-    countryCode?: CountriesEnum
+    countryCode?: CountriesEnum,
+    pageNumber?: number
   ): void => {
     getArticles(
       countryCode || this.state.countryCode,
       null,
-      null,
-      searchTerm
+      searchTerm,
+      pageNumber || this.state.pageNumber
     ).then((it) => {
       this.setState({
         isLoading: false,
         articles: it,
         searchTerm: searchTerm,
         countryDisabled: false,
+        hasMoreOnScroll: it.length > 0,
       });
     });
   };
@@ -216,25 +238,28 @@ class App extends React.Component<MyProps, MyState> {
   // Single category
   handleEventSingleCategory = (
     category: string,
-    countryCode?: CountriesEnum
+    countryCode?: CountriesEnum,
+    pageNumber?: number
   ): void => {
     this.setState({
       isLoading: true,
+      pageNumber: 1,
     });
 
-    const singleCategory = category !== "" ? category : this.state.category;
+    const singleCategory = category !== '' ? category : this.state.category;
 
     getArticles(
       countryCode || this.state.countryCode,
       singleCategory,
       null,
-      null
+      pageNumber || this.state.pageNumber
     ).then((it) => {
       this.setState({
         isLoading: false,
         articles: it,
         category: singleCategory,
         countryDisabled: false,
+        hasMoreOnScroll: it.length > 0,
       });
     });
   };
@@ -250,6 +275,60 @@ class App extends React.Component<MyProps, MyState> {
     this.setState({
       articlesPerCategory: articlesPerCategory,
     });
+  };
+
+  handeEventFetchMoreData = (): any => {
+    const newPage = this.state.pageNumber + 1;
+    const historyData = createBrowserHistory();
+    const route: string = historyData.location.pathname
+      .split('/')
+      .slice(2)
+      .join('/');
+
+    switch (route) {
+      case 'top-news':
+        getArticles(this.state.countryCode, null, null, newPage).then((it) => {
+          this.setState({
+            articles: [...this.state.articles, ...it],
+            pageNumber: newPage,
+            hasMoreOnScroll: it.length > 0,
+          });
+        });
+        break;
+      case 'category-single':
+        getArticles(
+          this.state.countryCode,
+          this.state.category,
+          null,
+          newPage
+        ).then((it) => {
+          this.setState({
+            articles: [...this.state.articles, ...it],
+            pageNumber: newPage,
+            hasMoreOnScroll: it.length > 0,
+          });
+        });
+        break;
+      case 'search':
+        getArticles(
+          this.state.countryCode,
+          null,
+          this.state.searchTerm,
+          newPage
+        ).then((it) => {
+          this.setState({
+            articles: [...this.state.articles, ...it],
+            pageNumber: newPage,
+            hasMoreOnScroll: it.length > 0,
+          });
+        });
+        break;
+      default:
+        this.setState({
+          isLoading: false,
+        });
+        break;
+    }
   };
 
   render(): ReactElement {
@@ -269,6 +348,7 @@ class App extends React.Component<MyProps, MyState> {
             onArticleBackEvent={this.handleEventBack}
             onSingleCategory={this.handleEventSingleCategory}
             onToggleCategory={this.handleEventToggle}
+            onFetchMoreData={this.handeEventFetchMoreData}
           />
         </div>
       </BrowserRouter>

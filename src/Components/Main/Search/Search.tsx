@@ -1,20 +1,22 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement } from 'react';
 
-import Button from "react-bootstrap/Button";
-import { DebounceInput } from "react-debounce-input";
+import Button from 'react-bootstrap/Button';
+import { DebounceInput } from 'react-debounce-input';
 
-import "./Search.scss";
-import ArticlesList from "../Articles/ArticlesList/ArticlesList";
-import { ArticleInterface } from "../Articles/ArticleInterface";
-import { CountriesEnum } from "../../../Service/CountriesEnum";
+import './Search.scss';
+import ArticlesList from '../Articles/ArticlesList/ArticlesList';
+import { ArticleInterface } from '../Articles/ArticleInterface';
+import { CountriesEnum } from '../../../Service/CountriesEnum';
 
 const search = (props: {
   articles: ArticleInterface[];
   searchTerm: string;
   country: string;
   countryCode: CountriesEnum;
+  hasMoreOnScroll: boolean;
   onArticleMoreEvent: (article: ArticleInterface) => void;
   onSearchEvent: (searchTerm: string) => void;
+  onFetchMoreData: () => any;
 }): ReactElement => {
   const handleEventSearch = (value: string): void => {
     props.onSearchEvent(value);
@@ -36,17 +38,19 @@ const search = (props: {
             variant="secondary"
             className="search-clear"
             title="Clear"
-            onClick={() => handleEventSearch("")}
+            onClick={() => handleEventSearch('')}
           >
             X
-          </Button>{" "}
+          </Button>{' '}
         </div>
 
         {/* List of articles */}
         <ArticlesList
           articles={props.articles}
           countryCode={props.countryCode}
+          hasMoreOnScroll={props.hasMoreOnScroll}
           onArticleMoreEvent={props.onArticleMoreEvent}
+          onFetchMoreData={props.onFetchMoreData}
         />
       </React.Fragment>
     </div>

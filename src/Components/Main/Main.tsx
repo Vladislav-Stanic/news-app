@@ -1,18 +1,18 @@
-import React, { ReactElement } from "react";
-import Container from "react-bootstrap/esm/Container";
-import Categories from "./Categories/Categories";
-import CategorySingle from "./CategorySingle/CategorySingle";
-import ArticleSingle from "./Articles/ArticleSingle/ArticleSingle";
-import TopNews from "./TopNews/TopNews";
-import Search from "./Search/Search";
-import Page404 from "./Page404/Page404";
+import React, { ReactElement } from 'react';
+import Container from 'react-bootstrap/esm/Container';
+import Categories from './Categories/Categories';
+import CategorySingle from './CategorySingle/CategorySingle';
+import ArticleSingle from './Articles/ArticleSingle/ArticleSingle';
+import TopNews from './TopNews/TopNews';
+import Search from './Search/Search';
+import Page404 from './Page404/Page404';
 
-import { ArticleInterface } from "./Articles/ArticleInterface";
-import { CountriesEnum } from "../../Service/CountriesEnum";
-import { CategoriesItem } from "./Categories/CategoriesItem";
-import { Route, Switch } from "react-router-dom";
-import { Countries } from "../../Service/Countries";
-import { ArticleTypeEnum } from "./Articles/ArticleTypeEnum";
+import { ArticleInterface } from './Articles/ArticleInterface';
+import { CountriesEnum } from '../../Service/CountriesEnum';
+import { CategoriesItem } from './Categories/CategoriesItem';
+import { Route, Switch } from 'react-router-dom';
+import { Countries } from '../../Service/Countries';
+import { ArticleTypeEnum } from './Articles/ArticleTypeEnum';
 
 const main = (props: {
   isLoading: boolean;
@@ -22,11 +22,13 @@ const main = (props: {
   searchTerm: string;
   category: string;
   articlesPerCategory: CategoriesItem[];
+  hasMoreOnScroll: boolean;
   onArticleMoreEvent: (article: ArticleInterface) => void;
   onSearchEvent: (searchTerm: string) => void;
   onArticleBackEvent: () => void;
   onSingleCategory: (category: string) => void;
   onToggleCategory: (index: number) => void;
+  onFetchMoreData: () => any;
 }): ReactElement => {
   const country: string = Countries.filter(
     (it) => it.code === props.countryCode
@@ -39,7 +41,7 @@ const main = (props: {
           path={[
             `/`,
             `/${props.countryCode}/`,
-            `/${props.countryCode}/topNews`,
+            `/${props.countryCode}/top-news`,
           ]}
           exact
           render={() => (
@@ -47,7 +49,9 @@ const main = (props: {
               articles={props.articles}
               country={country}
               countryCode={props.countryCode}
+              hasMoreOnScroll={props.hasMoreOnScroll}
               onArticleMoreEvent={props.onArticleMoreEvent}
+              onFetchMoreData={props.onFetchMoreData}
             />
           )}
         />
@@ -74,13 +78,15 @@ const main = (props: {
               country={country}
               countryCode={props.countryCode}
               searchTerm={props.searchTerm}
+              hasMoreOnScroll={props.hasMoreOnScroll}
               onArticleMoreEvent={props.onArticleMoreEvent}
               onSearchEvent={props.onSearchEvent}
+              onFetchMoreData={props.onFetchMoreData}
             />
           )}
         />
         <Route
-          path={`/${props.countryCode}/categorySingle`}
+          path={`/${props.countryCode}/category-single`}
           exact
           render={() => (
             <CategorySingle
@@ -88,13 +94,15 @@ const main = (props: {
               country={country}
               countryCode={props.countryCode}
               category={props.category}
+              hasMoreOnScroll={props.hasMoreOnScroll}
               onArticleMoreEvent={props.onArticleMoreEvent}
+              onFetchMoreData={props.onFetchMoreData}
             />
           )}
         />
         {props.articleSingle != null ? (
           <Route
-            path={`/${props.countryCode}/articleSingle`}
+            path={`/${props.countryCode}/article-single`}
             exact
             render={() => (
               <ArticleSingle
