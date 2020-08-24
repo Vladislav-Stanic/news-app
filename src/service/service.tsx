@@ -2,10 +2,12 @@ import {
   articlesTopHeadlinesUrl,
   country_code,
   category,
-  api_key,
+  CategoriesList,
 } from './Config';
 import { ArticleInterface } from '../Components/Main/Articles/ArticleInterface';
 import { CountriesEnum } from './CountriesEnum';
+import axios from 'axios';
+import { CategoriesItem } from '../Components/Main/Categories/CategoriesItem';
 
 export async function getArticles(
   countryCodePar: CountriesEnum | null,
@@ -23,86 +25,60 @@ export async function getArticles(
 
   const page: string = pageNumber.toString();
 
-  try {
-    const urlBase = `${articlesTopHeadlinesUrl}?country=${countryCodePar}`;
-    let url = urlBase;
+  // try {
+  const urlBase = `${articlesTopHeadlinesUrl}?country=${countryCodePar}`;
+  let url = urlBase;
 
-    if (searchTerm != null) {
-      url = `${urlBase}&q=${searchTerm}&page=${page}`;
-    } else if (categoryPar != null) {
-      url = `${urlBase}&category=${categoryPar}&page=${page}`;
-    }
-
-    // console.log("url ======== ", url);
-
-    const articles: Response = await fetch(url, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    });
-
-    const result = await articles.json();
-    return result.articles;
-  } catch {
-    console.log('Error on request!');
-    return [];
+  if (searchTerm != null) {
+    url = `${urlBase}&q=${searchTerm}&page=${page}`;
+  } else if (categoryPar != null) {
+    url = `${urlBase}&category=${categoryPar}&page=${page}`;
   }
+
+  // console.log("url ======== ", url);
+  return new Promise<ArticleInterface[]>((resolve, reject) => {
+    axios
+      .get(url)
+      .then((result) => {
+        resolve(result.data.articles);
+      })
+      .catch((error) => {
+        console.log('Error ', error);
+        reject();
+      });
+  });
 }
 
-export async function getArticlesPerCategory(
+export function getArticlesPerCategory(
   countryCodePar: CountriesEnum
-): Promise<any[]> {
+): Promise<CategoriesItem[]> {
   const urlBase = `${articlesTopHeadlinesUrl}?country=${countryCodePar}`;
+  const requests: any = [];
 
-  return Promise.all([
-    fetch(`${urlBase}&category=business&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-    fetch(`${urlBase}&category=entertainment&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-    fetch(`${urlBase}&category=general&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-    fetch(`${urlBase}&category=health&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-    fetch(`${urlBase}&category=science&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-    fetch(`${urlBase}&category=sports&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-    fetch(`${urlBase}&category=technology&pageSize=5`, {
-      headers: {
-        'X-API-KEY': api_key,
-      },
-    }),
-  ])
-    .then(([res1, res2, res3, res4, res5, res6, res7]) =>
-      Promise.all([
-        res1.json(),
-        res2.json(),
-        res3.json(),
-        res4.json(),
-        res5.json(),
-        res6.json(),
-        res7.json(),
-      ])
-    )
-    .then((result) => {
-      return result;
-    });
+  for (const item of CategoriesList) {
+    const url = `${urlBase}&category=${item}&pageSize=5`;
+    requests.push(axios.get(url));
+  }
+
+  return new Promise<CategoriesItem[]>((resolve, reject) => {
+    axios
+      .all(requests)
+      .then(
+        axios.spread((...responses) => {
+          const categories: CategoriesItem[] = [];
+          for (let i = 0; i < CategoriesList.length; i++) {
+            categories.push({
+              name: CategoriesList[i],
+              articles: (responses[i] as any).data.articles,
+              hidden: true,
+            });
+          }
+          resolve(categories);
+        })
+      )
+      .catch((error) => {
+        console.log('Error ', error);
+        reject();
+      });
+  });
 }

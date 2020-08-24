@@ -4,7 +4,7 @@ import './App.scss';
 import Header from './Components/Header/Header';
 
 import { CountriesEnum } from './Service/CountriesEnum';
-import { country_code, CategoriesList } from './Service/Config';
+import { country_code, api_key } from './Service/Config';
 import { CategoriesItem } from './Components/Main/Categories/CategoriesItem';
 import { NavPagesEnum } from './Service/NavPagesEnum';
 import { getArticles, getArticlesPerCategory } from './Service/service';
@@ -13,6 +13,8 @@ import { ArticleInterface } from './Components/Main/Articles/ArticleInterface';
 import { BrowserRouter } from 'react-router-dom';
 import Main from './Components/Main/Main';
 import { createBrowserHistory } from 'history';
+import axios from 'axios';
+import { request } from 'http';
 
 type MyProps = unknown;
 type MyState = {
@@ -65,6 +67,28 @@ class App extends React.Component<MyProps, MyState> {
       pageNumber: 1,
       hasMoreOnScroll: true,
     };
+
+    // Aded intrceptor on request to add api key
+    axios.interceptors.request.use(function (config) {
+      config.headers.Authorization = api_key;
+      return config;
+    });
+
+    // Interceptors response and error
+    axios.interceptors.response.use(
+      function (response) {
+        return response;
+      },
+      function (error) {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        if (error.response && error.response.status === 401) {
+          console.log('Error: ==== ', error.response);
+          return Promise.reject(error.response.data);
+        }
+        return Promise.reject(error.message);
+      }
+    );
   }
 
   // Mount (depends on parameters in url)
@@ -196,15 +220,7 @@ class App extends React.Component<MyProps, MyState> {
     this.setState({
       isLoading: true,
     });
-    const categories: CategoriesItem[] = [];
-    const results = await getArticlesPerCategory(this.state.countryCode);
-    for (let i = 0; i < CategoriesList.length; i++) {
-      categories.push({
-        name: CategoriesList[i],
-        articles: results[i].articles,
-        hidden: true,
-      });
-    }
+    const categories = await getArticlesPerCategory(this.state.countryCode);
     this.setState({
       isLoading: false,
       articleSingle: null,
